@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { useAppSelector } from "@/store/hooks";
 import { auth } from "@/lib/firebase/config";
@@ -24,9 +25,39 @@ export default function Dashboard() {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
-  const [filterImportance, setFilterImportance] = useState<EventImportanceFilter>("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [viewMode, setViewMode] = useState<"calendar" | "list">((searchParams.get("view") as "calendar" | "list") || "calendar");
+  const [filterImportance, setFilterImportance] = useState<EventImportanceFilter>((searchParams.get("importance") as EventImportanceFilter) || "all");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+
+  const updateUrl = useCallback((updates: Record<string, string | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === "" || value === "all") {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    });
+
+    const query = params.toString();
+    const url = query ? `${pathname}?${query}` : pathname;
+    router.replace(url, { scroll: false });
+  }, [pathname, router, searchParams]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateUrl({ 
+        view: viewMode !== "calendar" ? viewMode : null, 
+        importance: filterImportance !== "all" ? filterImportance : null,
+        q: searchQuery || null 
+      });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [viewMode, filterImportance, searchQuery, updateUrl]);
 
   const filteredEvents = events.filter((evt) => {
     const matchesImportance = filterImportance === "all" || evt.importance === filterImportance;
