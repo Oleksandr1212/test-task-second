@@ -29,9 +29,9 @@ export function AuthForm({ type }: AuthFormProps) {
   const [loading, setLoading] = useState(false);
 
   const authSchema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-    name: type === "register" ? z.string().min(2, { message: "Name is required" }) : z.string().optional(),
+    email: z.string().email({ message: "Некоректна адреса електронної пошти" }),
+    password: z.string().min(6, { message: "Пароль має містити як мінімум 6 символів" }),
+    name: type === "register" ? z.string().min(2, { message: "Ім'я обов'язкове" }) : z.string().optional(),
   });
 
   const {
@@ -79,11 +79,11 @@ export function AuthForm({ type }: AuthFormProps) {
   return (
     <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl border border-gray-100">
       <div className="text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-          {type === "login" ? "Welcome back" : "Create an account"}
-        </h2>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          {type === "login" ? "З поверненням" : "Створити акаунт"}
+        </h1>
         <p className="mt-2 text-sm text-gray-600">
-          {type === "login" ? "Sign in to manage your events" : "Start planning your events today"}
+          {type === "login" ? "Увійдіть, щоб керувати своїми подіями" : "Почніть планувати свої події вже сьогодні"}
         </p>
       </div>
       
@@ -96,12 +96,13 @@ export function AuthForm({ type }: AuthFormProps) {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {type === "register" && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Ім'я</label>
             <input
+              id="name"
               type="text"
               {...register("name")}
               className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-              placeholder="John Doe"
+              placeholder="Олександр"
             />
             {errors.name && (
               <p className="mt-1.5 text-sm text-red-500">{errors.name.message}</p>
@@ -110,12 +111,13 @@ export function AuthForm({ type }: AuthFormProps) {
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Електронна пошта</label>
           <input
+            id="email"
             type="email"
             {...register("email")}
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
-            placeholder="you@example.com"
+            placeholder="example@mail.com"
           />
           {errors.email && (
             <p className="mt-1.5 text-sm text-red-500">{errors.email.message}</p>
@@ -123,8 +125,9 @@ export function AuthForm({ type }: AuthFormProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
           <input
+            id="password"
             type="password"
             {...register("password")}
             className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
@@ -140,7 +143,7 @@ export function AuthForm({ type }: AuthFormProps) {
           disabled={loading}
           className="w-full px-4 py-2.5 font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm shadow-blue-200"
         >
-          {loading ? "Please wait..." : type === "login" ? "Sign In" : "Sign Up"}
+          {loading ? "Будь ласка, зачекайте..." : type === "login" ? "Увійти" : "Зареєструватися"}
         </button>
       </form>
 
@@ -149,7 +152,7 @@ export function AuthForm({ type }: AuthFormProps) {
           <div className="w-full border-t border-gray-200"></div>
         </div>
         <div className="relative flex justify-center text-sm pt-2">
-          <span className="px-3 bg-white text-gray-500 rounded-full">Or continue with</span>
+          <span className="px-3 bg-white text-gray-500 rounded-full">Або увійдіть за допомогою</span>
         </div>
       </div>
 
@@ -159,22 +162,22 @@ export function AuthForm({ type }: AuthFormProps) {
         className="w-full px-4 py-2.5 font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center gap-3 shadow-sm"
       >
         <Image src="/google.svg" alt="Google logo" width={20} height={20} />
-        Sign in with Google
+        Увійти через Google
       </button>
 
       <div className="text-center text-sm text-gray-600 pt-2">
         {type === "login" ? (
           <>
-            Don't have an account?{" "}
+            Ще не маєте акаунту?{" "}
             <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
-              Sign up
+              Зареєструватися
             </Link>
           </>
         ) : (
           <>
-            Already have an account?{" "}
+            Вже маєте акаунт?{" "}
             <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
-              Sign in
+              Увійти
             </Link>
           </>
         )}

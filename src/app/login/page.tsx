@@ -1,4 +1,10 @@
 import { AuthForm } from "@/components/AuthForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Вхід",
+  description: "Увійдіть у свій акаунт Event Planner, щоб керувати подіями.",
+};
 
 export default function LoginPage() {
   return (
