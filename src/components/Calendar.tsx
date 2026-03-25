@@ -11,8 +11,11 @@ import {
   endOfWeek, 
   isSameMonth, 
   isSameDay, 
-  eachDayOfInterval 
+  eachDayOfInterval,
+  isBefore,
+  startOfDay
 } from "date-fns";
+import { uk } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
 import { CalendarEvent } from "@/types";
@@ -46,7 +49,7 @@ export function Calendar({ events = [], onDayClick, onEventClick }: CalendarProp
     <div className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50">
         <h2 className="text-xl font-bold text-gray-900 capitalize">
-          {format(currentDate, "MMMM yyyy")}
+          {format(currentDate, "LLLL yyyy", { locale: uk })}
         </h2>
         <div className="flex space-x-2">
           <button
@@ -76,6 +79,7 @@ export function Calendar({ events = [], onDayClick, onEventClick }: CalendarProp
         {days.map((day) => {
           const isCurrentMonth = isSameMonth(day, monthStart);
           const isToday = isSameDay(day, new Date());
+          const isPast = isBefore(day, startOfDay(new Date()));
           
           const dayString = format(day, "yyyy-MM-dd");
           const dayEvents = events.filter((e) => e.date === dayString);
@@ -83,10 +87,17 @@ export function Calendar({ events = [], onDayClick, onEventClick }: CalendarProp
           return (
             <div
               key={day.toString()}
-              onClick={() => onDayClick && onDayClick(day)}
+              onClick={() => {
+                if (!isPast && onDayClick) {
+                  onDayClick(day);
+                }
+              }}
               className={clsx(
-                "min-h-30 bg-white p-2 transition-colors cursor-pointer hover:bg-blue-50/50 group flex flex-col",
-                !isCurrentMonth && "bg-gray-50/50 text-gray-400"
+                "min-h-30 p-2 transition-colors flex flex-col group",
+                isPast 
+                  ? "bg-gray-50 cursor-not-allowed text-gray-400 opacity-70" 
+                  : "bg-white cursor-pointer hover:bg-blue-50/50",
+                !isCurrentMonth && "opacity-50"
               )}
             >
               <div className="flex justify-between items-start mb-1">

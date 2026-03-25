@@ -41,6 +41,7 @@ export function EventModal({
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors },
   } = useForm<EventFormData>({
     resolver: zodResolver(eventSchema),
@@ -78,6 +79,29 @@ export function EventModal({
   if (!isOpen) return null;
 
   const isEditing = !!existingEvent;
+  const todayString = format(new Date(), "yyyy-MM-dd");
+
+  const handleFormSubmit = async (data: EventFormData) => {
+    if (!isEditing) {
+      if (data.date < todayString) {
+        setError("date", { type: "manual", message: "Дата не може бути в минулому" });
+        return;
+      }
+      
+      if (data.date === todayString && data.time) {
+        const eventDateTime = new Date(`${data.date}T${data.time}`);
+        if (eventDateTime < new Date()) {
+          setError("time", {
+            type: "manual",
+            message: "Цей час уже минув",
+          });
+          return;
+        }
+      }
+    }
+    
+    await onSave(data);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm transition-opacity">
@@ -96,7 +120,7 @@ export function EventModal({
         </div>
 
         <div className="p-6 overflow-y-auto">
-          <form id="event-form" onSubmit={handleSubmit(onSave)} className="space-y-4">
+          <form id="event-form" onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Назва події *</label>
               <input
@@ -125,6 +149,7 @@ export function EventModal({
                   {...register("time")}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors border-gray-200"
                 />
+                {errors.time && <p className="mt-1 text-sm text-red-500">{errors.time.message}</p>}
               </div>
             </div>
 
