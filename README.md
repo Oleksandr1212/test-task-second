@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Як запустити проект
 
-## Getting Started
-
-First, run the development server:
-
+### 1. Клонування та встановлення залежностей
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Oleksandr1212/test-task-second
+cd test-task-second
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Налаштування середовища
+Створіть файл `.env.local` у корені проекту та додайте ваші ключі Firebase (можна скопіювати структуру з `.env.example`):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=ваш_ключ
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=ваш_домен
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=ваш_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=ваш_bucket
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=ваш_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=ваш_app_id
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Запуск у режимі розробки
+```bash
+npm run dev
+```
+Додаток буде доступний за адресою [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Використані додаткові бібліотеки
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Redux Toolkit**: Для глобального управління станом
+- **lucide-react**: Набір сучасних та легких іконок
+- **date-fns**: Бібліотека для роботи з датами 
+- **react-hook-form + zod**:
+  - **react-hook-form**: Для ефективного управління формами без зайвих ререндерів
+  - **zod**: Для валідації схем даних
+- **clsx / tailwind-merge**: Для комбінування CSS-класів
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Архітектура проекту
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **`/src/app`**: Нова структура Next.js App Router
+- **`/src/components`**: Багаторазові UI-компоненти
+- **`/src/hooks`**: Кастомні хуки для бізнес-логіки
+- **`/src/lib`**: Конфігурації зовнішніх сервісів та API-функції
+- **`/src/store`**: Глобальне сховище Redux
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
